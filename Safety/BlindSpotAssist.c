@@ -26,9 +26,6 @@ int average = 0;                // the average
 int inputPin = A0;
 int inches = 0;
 int cm = 0;
-int melody[] = {NOTE_C4};
-int noteDurations[] = {4};
-int switch_1 = 0;
 
 long readUltrasonicDistance(int pin)
 {
@@ -82,22 +79,16 @@ void loop()
 		// send it to the computer as ASCII digits
 	Serial.println(average);
 	delay(1);        // delay in between reads for stability
-	if(average >= 600)
+	if((average >= 600) && (inches < 31.0))
 	{
-		if(inches < 31.0)
+		digitalWrite(5, HIGH);
+		if(digitalRead(4) == HIGH)
 		{
-			digitalWrite(5, HIGH);
-			switch_1 == digitalRead(4);
-			if(switch_1 == HIGH)
-			{
-              	int noteDuration = 1000 / 4;
-				digitalWrite(8, HIGH);
-
-			}
-          	if(switch_1 == LOW)
-			{
-				digitalWrite(8, LOW);  
-			}
+			digitalWrite(8, HIGH);
+		}
+       	else
+		{
+			digitalWrite(8, LOW);  
 		}
 	}
   	else
