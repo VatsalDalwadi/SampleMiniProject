@@ -7,6 +7,7 @@
 #define MOVE_MOTOR_DEFAULT_POS(INDEX) INDEX==1?OCR1A=3604:OCR1B=3604;
 #define MOVE_MOTOR_LIGHTING_POS(INDEX)  INDEX==1?OCR1A=2698:OCR1B=4600;
 
+/* Macros to set, reset, and get a bit*/
 #define SET_BIT(PORT,BIT) PORT|=(1<<BIT);
 #define CLR_BIT(PORT,BIT) PORT&=~(1<<BIT);
 #define GET_BIT(PORT,BIT) (PORT>>BIT)&1;
