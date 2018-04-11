@@ -31,7 +31,47 @@ int main()
   	Serial.println(speed_1);
   	Serial.println(distance);
     Serial.println(front_distance);
-  	if((speed_1 > 500) && (distance > 500))
+    if(speed_1 > 500)
+	{
+		if(distance < 500)
+		{
+			PORTD |= (1<<PD5);
+//			if((((PIND>>4)&0x01)) == 0x01)  
+          	if(distance < 300)
+			{
+				PORTB |= (1<<PB0);
+			}
+			else
+			{
+				PORTB &= ~(1<<PB0);  
+			}
+		}
+		else
+		{
+			PORTD &= ~(1<<PD5);
+			PORTB &= ~(1<<PB0);	
+		}
+		if(front_distance < 800)
+		{
+			PORTD |= (1<<PD5);
+		}
+		if(front_distance < 300)
+		{
+			PORTD |= (1<<PD5);
+			PORTD |= (1<<PD3);
+		}
+		else
+		{
+			PORTD &= ~(1<<PD3);
+		}
+	}
+	else
+	{
+		PORTD &= ~(1<<PD3);
+		PORTD &= ~(1<<PD5);
+		PORTB &= ~(1<<PB0);
+	}
+/*  	if((speed_1 > 500) && (distance > 500))
   	{
       	PORTD |= (1<<PD5);
       	if((((PIND>>4)&0x01)) == 0x01)    
@@ -48,14 +88,24 @@ int main()
       	PORTD &= ~(1<<PD5);
       	PORTB &= ~(1<<PB0);
    	}
-   	if((speed_1 > 500) && (front_distance < 500))
+    if((speed_1 > 500) && (front_distance < 800))
     {
+      	PORTD |= (1<<PD5);
+    }
+    else
+    {
+    	PORTD &= ~(1<<PD5);
+    }
+   	if((speed_1 > 500) && (front_distance < 300))
+    {
+      	PORTD |= (1<<PD5);
     	PORTD |= (1<<PD3);
     }
     else
     {
     	PORTD &= ~(1<<PD3);
-    }
+        PORTD &= ~(1<<PD5);
+    }*/
   }
   
   return 0;
