@@ -12,7 +12,7 @@
 #define CLR_BIT(PORT,BIT) PORT&=~(1<<BIT);
 #define GET_BIT(PORT,BIT) (PORT>>BIT)&1;
 
-
+/* Constants definition*/
 #define ANALOG_SENSORS_DDR  DDRC
 #define LIGHT_SENSOR_PIN    PC0
 #define STEERING_WHEEL_PIN  PC1
@@ -23,8 +23,6 @@
 #define DIRECTION_SIGANL_R  PD2
 #define DIRECTION_SIGANL_L  PD4
 #define HEAD_BEAM_LED       PD7
-
-
 
 #define PWM_DDR             DDRB
 #define RIGHT_SIDE_SERVO    PB1
@@ -54,8 +52,7 @@ int main()
   float lightSensorRead=0.0f;
   float steeringWheelRead=0.0f;
   
-  //DDRB|=0x01;
-  //DDRD&=0xFC;
+  /* Set pins for input and output mode */
   CLR_BIT(DIGITAL_IN_OUT_DDR,DIRECTION_SIGANL_R)
   CLR_BIT(DIGITAL_IN_OUT_DDR,DIRECTION_SIGANL_L)
   
@@ -64,6 +61,7 @@ int main()
   CLR_BIT(ANALOG_SENSORS_DDR,LIGHT_SENSOR_PIN)
   CLR_BIT(ANALOG_SENSORS_DDR,STEERING_WHEEL_PIN)
   
+  /* Initiate Fast PWM on timer1 to control servo motors */
   fast_PWM_Tim1_Init();
   
   
