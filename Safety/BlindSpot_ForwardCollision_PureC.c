@@ -35,8 +35,7 @@ int main()
 	{
 		if(distance < 500)
 		{
-			PORTD |= (1<<PD5);
-//			if((((PIND>>4)&0x01)) == 0x01)  
+			PORTD |= (1<<PD5);  
           	if(distance < 300)
 			{
 				PORTB |= (1<<PB0);
@@ -71,41 +70,6 @@ int main()
 		PORTD &= ~(1<<PD5);
 		PORTB &= ~(1<<PB0);
 	}
-/*  	if((speed_1 > 500) && (distance > 500))
-  	{
-      	PORTD |= (1<<PD5);
-      	if((((PIND>>4)&0x01)) == 0x01)    
-      	{
-          	PORTB |= (1<<PB0);
-      	}
-      	else
-      	{
-        	PORTB &= ~(1<<PB0);  
-      	}
-   	}
-   	else
-   	{
-      	PORTD &= ~(1<<PD5);
-      	PORTB &= ~(1<<PB0);
-   	}
-    if((speed_1 > 500) && (front_distance < 800))
-    {
-      	PORTD |= (1<<PD5);
-    }
-    else
-    {
-    	PORTD &= ~(1<<PD5);
-    }
-   	if((speed_1 > 500) && (front_distance < 300))
-    {
-      	PORTD |= (1<<PD5);
-    	PORTD |= (1<<PD3);
-    }
-    else
-    {
-    	PORTD &= ~(1<<PD3);
-        PORTD &= ~(1<<PD5);
-    }*/
   }
   
   return 0;
