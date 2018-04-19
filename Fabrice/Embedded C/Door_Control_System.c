@@ -19,10 +19,6 @@ int main(void) {
   SET_BIT(DDRB, PORTB3);  // Set PIN 0 2 and 3 of PORTB as output
   SET_BIT(DDRD, PORTD4);  // Set Pin4 of PORTD output
   while (1) {
-// mask = (1<<PORTD2);
-// PORTD |= (1<<PORTD4);
-// PORTB |= (1<<PORTB0)|(1<<PORTB2)|(1<<PORTB3);
-// PORTB |= (1<<PORTB4);
 // extract_bit = PORTD & mask;
   if (TEST_BIT(PIND, PIND2)) {  // Check if the input on PORTD2 is set to 1
   CLR_BIT(PORTD, LED1);  // Turn off LED1
