@@ -9,26 +9,27 @@
 #define CLR_BIT(PORT, BIT) PORT &= ~(1 << BIT)
 #define TOGGLE_BIT (PORT, BIT) PORT ^= (1 << BIT)
 // assigne different ports
-#define SystemOn         PORTB1  // Green LED
+#define SystemOn         PORTB0  // Green LED
 #define StartButton      PORTB5  // Push Button
-#define BatteryPower     PORTC0  // Potentiometer 1
-#define ConsumePower     PORTC1  // Potentiometer 2
-#define RecoverdPower    PORTC2  // Potentiometer 3
+#define BatteryPower     PORTC0  // Initial Power
+#define ConsumePower     PORTC1  // Power Consume
+#define RecoverdPower    PORTC2  // Power from pedal
 #define SystemOff        PORTD2  // System runing out of power
 #define ChargerOn        PORTD4  // Charging system On
 #define RecoveringPower  PORTD7  // Energy is being recover
 #define BLINK_DELAY_MS 1000
-#define Treshold    300
-uint16_t Battery, PowerR, PowerC, CurrentP;
-uint8_t pinC0 = 0;
-uint8_t pinC1 = 1;
-uint8_t pinC2 = 2;
+#define Threshold    300
+uint16_t Battery, PowerR, PowerC;
+int16_t CurrentP;
+uint8_t pin0 = 0;
+uint8_t pin1 = 1;
+uint8_t pin2 = 2;
 volatile int Flag = 0;
 
 int main(void) {
   Serial.begin(9600);
-  SET_BIT(DDRB, PORTB1);  // Set PORTB1 as output
-  CLR_BIT(DDRB, PORTB5);  // Set PORTB1 as input
+  SET_BIT(DDRB, PORTB0);  // Set PORTB0 as output
+  CLR_BIT(DDRB, PORTB5);  // Set PORTB5 as input
 /* set pin 7,4and 2 of PORTD for output*/
   SET_BIT(DDRD, SystemOff);
   SET_BIT(DDRD, ChargerOn);
@@ -38,57 +39,39 @@ int main(void) {
   CLR_BIT(DDRC, PORTC1);
   CLR_BIT(DDRC, PORTC2);
   while (1) {
+    Serial.println(ReadADC(PORTC1));
   initialize();
-  if (!(PINB & (~(1 << StartButton)) )) {  // The car system is on
+  if (!(PINB & (~(1 << StartButton)))) {  // The car system is on
 // 1 ---Checking if the initial power in the battery is enough
-  if (0 == Flag) {
-  Flag = 1;
-  do {
-  Battery = ReadADC(pinC0);
-  } while (Battery < 300);
-  SET_BIT(DDRB, SystemOn);  // Turn on Green LED
-  } else {  // The car is already runing
-  Battery  =  ReadADC(pinC0);
-  PowerR   =  ReadADC(pinC1);
-  PowerC   =  ReadADC(pinC2);
-  if (PowerR > 0) {
-  SET_BIT(PORTD, ChargerOn);  // Charging
+  SET_BIT(PORTB, SystemOn);
+  _delay_ms(2000);
+  CurrentP = (ReadADC(PORTC0) + ReadADC(PORTC2)) - ReadADC(PORTC1);
+  if (CurrentP < Threshold) {
+  SET_BIT(PORTD, SystemOff);
+  _delay_ms(50);
+  CLR_BIT(PORTD, SystemOff);
+  _delay_ms(50);
+  SET_BIT(PORTD, SystemOff);
+  _delay_ms(50);
+  CLR_BIT(PORTD, SystemOff);
+  _delay_ms(50);
+  SET_BIT(PORTD, SystemOff);
+  _delay_ms(50);
+  CLR_BIT(PORTD, SystemOff);
+  _delay_ms(50);
+  }
+  if (ReadADC(PORTC2) > ReadADC(PORTC1)) {
+  SET_BIT(PORTD, RecoveringPower);  // Energy is being recovered
+  } else {
+  CLR_BIT(PORTD, RecoveringPower);  // No recovering
+  }  // Make sure we have enough energy in the battery to drive
+  if (ReadADC(PORTC2) > 300) {
+  SET_BIT(PORTD, ChargerOn);
   } else {
   CLR_BIT(PORTD, ChargerOn);
   }
-  CurrentP = Battery + PowerR - PowerC;
-  while (CurrentP < 0) {
-  // Too much energy is being consumed
-  // CLR_BIT(DDRB,SystemOn); Turning off the green LED
-  CLR_BIT(DDRD, RecoveringPower);  // Turning Blue LED Off
-  SET_BIT(PORTD, SystemOff);
-  _delay_ms(50);
-  CLR_BIT(PORTD, SystemOff);
-  _delay_ms(50);
-  CurrentP = ReadADC(pinC0) + ReadADC(pinC2)- ReadADC(pinC1);
-  }
-  CLR_BIT(PORTD, SystemOff);
-  if (ReadADC(pinC1) >= ReadADC(pinC2)) {
-  SET_BIT(DDRD, RecoveringPower);  // Energy is being recovered
-  } else {
-  CLR_BIT(DDRD, RecoveringPower);  // No recovering
-  }
-  }
-// Make sure we have enough energy in the battery to drive
   } else {  // Car system is off
-  SET_BIT(PORTD, SystemOff);
-  _delay_ms(50);
-  CLR_BIT(PORTD, SystemOff);
-  _delay_ms(50);
-  SET_BIT(PORTD, SystemOff);
-  _delay_ms(50);
-  CLR_BIT(PORTD, SystemOff);
-  _delay_ms(50);
-  SET_BIT(PORTD, SystemOff);
-  _delay_ms(50);
-  CLR_BIT(PORTD, SystemOff);
-  _delay_ms(50);
-  CLR_BIT(PORTB, PORTB1);
+  CLR_BIT(PORTB, SystemOn);
   }
   }
 }
